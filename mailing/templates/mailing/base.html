@@ -32,12 +32,23 @@
             </ul>
             <div class="d-lg-flex col-lg-3 justify-content-lg-end">
                 <ul class="navbar-nav col-lg-6 justify-content-lg-end">
+
+                    {% if not user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Регистрация</a>
+                        <a class="nav-link link-success" href="{% url 'users:register' %}">Регистрация</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Вход</a>
+                        <a class="nav-link link-primary" href="{% url 'users:login' %}">Вход</a>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link link-primary" href="{% url 'users:profile' %}">{{ user }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link link-danger" href="{% url 'users:logout' %}">Выход</a>
+                    </li>
+                    {% endif %}
+
                 </ul>
             </div>
         </div>
