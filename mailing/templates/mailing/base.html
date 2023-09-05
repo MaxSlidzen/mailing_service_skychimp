@@ -18,7 +18,7 @@
             <a class="navbar-brand col-lg-3 me-0" href="#">SkyChimp</a>
             <ul class="navbar-nav col-lg-6 justify-content-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Главная</a>
+                    <a class="nav-link" href="{% url 'mailing:home' %}">Главная</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Рассылки</a>
@@ -28,6 +28,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Блог</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Контакты</a>
                 </li>
             </ul>
             <div class="d-lg-flex col-lg-3 justify-content-lg-end">
@@ -66,12 +69,6 @@
                 <small class="d-block mb-3 text-muted">&copy; 2023</small>
             </div>
 
-            <ul class="nav col-md-4 justify-content-end">
-              <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Главная</a></li>
-              <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Рассылки</a></li>
-              <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Блог</a></li>
-              <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Контакты</a></li>
-            </ul>
         </div>
     </footer>
 </div>

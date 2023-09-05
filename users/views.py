@@ -1,5 +1,5 @@
 from django.contrib.auth.views import LoginView
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
 from django.views.generic import CreateView, UpdateView
@@ -18,7 +18,7 @@ class UserLoginView(LoginView):
 class UserRegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('users:send_verify')
 
     def form_valid(self, form):
         if form.is_valid():
@@ -43,4 +43,18 @@ def verify(request, verify_key):
     user_item.is_active = True
     user_item.verify_token = None
     user_item.save()
-    return redirect(reverse('users:login'))
+    return redirect(reverse('users:verify_success'))
+
+
+def verify_success(request):
+    context = {
+        'verifying_message': 'Электронная почта подтверждена.'
+    }
+    return render(request, 'users/verify_message.html', context)
+
+
+def send_verify(request):
+    context = {
+        'verifying_message': 'На вашу электронную почту отправлена ссылка для подтверждения.'
+    }
+    return render(request, 'users/verify_message.html', context)
