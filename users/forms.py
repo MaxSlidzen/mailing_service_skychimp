@@ -32,3 +32,11 @@ class UserLoginForm(StyleFormMixin, AuthenticationForm):
     class Meta:
         model = User
         fields = ('email', 'password')
+
+    def clean_username(self):
+        cleaned_data = self.cleaned_data['username']
+
+        if User.objects.filter(email=cleaned_data, is_active=False).exists():
+            raise forms.ValidationError('Активность аккаунта приостановлена. Проверьте электронную почту.')
+
+        return cleaned_data
