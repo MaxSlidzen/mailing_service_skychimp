@@ -12,6 +12,6 @@ urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('verify_<str:verify_key>/', verify, name='verify'),
-    path('verify_success', verify_success, name='verify_success'),
-    path('send_verify', send_verify, name='send_verify'),
+    path('verify_success/', verify_success, name='verify_success'),
+    path('send_verify/', send_verify, name='send_verify'),
 ]
