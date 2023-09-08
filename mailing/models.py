@@ -11,7 +11,7 @@ class Client(models.Model):
     patronic_name = models.CharField(max_length=100, **NULLABLE, verbose_name='отчество')
     comment = models.TextField(verbose_name='комментарий')
 
-    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
                                  verbose_name='добавлен пользователем')
 
     def __str__(self):

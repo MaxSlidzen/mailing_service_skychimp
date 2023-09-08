@@ -1,0 +1,23 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <p>Подтвердить удаление {{ object.email }} {{ object|full_name|title }}?</p>
+                            <button type="submit" class="btn btn-danger">
+                                Подтвердить
+                            </button>
+                            <a href="{% url 'mailing:client_list' %}" class="btn btn-warning">Отмена</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
