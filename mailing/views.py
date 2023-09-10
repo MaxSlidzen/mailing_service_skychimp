@@ -4,6 +4,7 @@ from django.views.generic import TemplateView, CreateView, ListView, DetailView,
 
 from mailing.forms import ClientForm, MailingForm
 from mailing.models import Client, Mailing
+from mailing.services import count_all_mailings, count_active_mailings, count_unique_clients
 
 
 class HomeView(TemplateView):
@@ -11,6 +12,13 @@ class HomeView(TemplateView):
     extra_context = {
         'title': 'Главная'
     }
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['mailings'] = count_all_mailings()
+        context_data['active_mailings'] = count_active_mailings()
+        context_data['unique_clients'] = count_unique_clients()
+        return context_data
 
 
 class ClientListView(ListView):
