@@ -2,8 +2,9 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView
 
+from mailing.models import Mailing
 from users.forms import UserLoginForm, UserRegisterForm, UserUpdateForm
 from users.models import User
 from users.services import send_verify_email
@@ -45,6 +46,37 @@ class UserUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class UserListView(ListView):
+    model = User
+    extra_context = {
+        'title': 'Список пользователей'
+    }
+
+
+class UserDetailView(DetailView):
+    model = User
+    extra_context = {
+        'title': 'Пользователь'
+    }
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['mailings'] = Mailing.objects.filter(author=self.object)
+        return context_data
+
+
+def toggle_activity(request, pk):
+    user_item = get_object_or_404(User, pk=pk)
+    if user_item.is_active:
+        user_item.is_active = False
+    else:
+        user_item.is_active = True
+
+    user_item.save()
+
+    return redirect(reverse('users:user_list'))
 
 
 def verify(request, verify_key):
