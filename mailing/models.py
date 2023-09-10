@@ -45,7 +45,8 @@ class Mailing(models.Model):
     time = models.TimeField(verbose_name='время отправки')
     period = models.CharField(max_length=20, choices=PERIODS, verbose_name='периодичность')
     status = models.CharField(max_length=20, choices=STATUSES, verbose_name='статус рассылки')
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='автор рассылки')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+                               verbose_name='автор рассылки')
     client = models.ManyToManyField(Client, verbose_name='клиент')
 
     subject = models.CharField(max_length=100, verbose_name='тема')

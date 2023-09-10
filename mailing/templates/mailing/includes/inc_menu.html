@@ -39,10 +39,10 @@
                                aria-expanded="false" href="#">{{ user }}</a>
                             <ul class="dropdown-menu dropdown-menu-dark m-2">
                                 <li><a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a></li>
-                                <li><a class="dropdown-item" href="#">Мои рассылки</a></li>
+                                <li><a class="dropdown-item" href="{% url 'mailing:mailing_list' user.id %}">Мои рассылки</a></li>
                                 <li><a class="dropdown-item" href="{% url 'mailing:client_list' %}">Мои клиенты</a></li>
                                 {% if user.is_staff %}
-                                    <li><a class="dropdown-item" href="#">Все рассылки</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'mailing:mailing_list' 0 %}">Все рассылки</a></li>
                                     <li><a class="dropdown-item" href="#">Пользователи</a></li>
                                 {% endif %}
                             </ul>

@@ -14,3 +14,16 @@ class ClientForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Client
         exclude = ('added_by',)
+
+
+class MailingForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = Mailing
+        exclude = ('author',)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['client'].widget = forms.CheckboxSelectMultiple()
+        self.fields['client'].queryset = Client.objects.filter(added_by=user)
+        self.fields['time'].help_text = 'Введите время в формате ЧЧ:ММ'

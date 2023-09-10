@@ -1,0 +1,64 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        {{ title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <caption>Рассылка</caption>
+                        <tr>
+                            <td>Тема</td>
+                            <td>{{ object.subject }}</td>
+                        </tr>
+                        <tr>
+                            <td>Сообщение</td>
+                            <td>{{ object.message }}</td>
+                        </tr>
+                        <tr>
+                            <td>Время отправки</td>
+                            <td>{{ object.time }}</td>
+                        </tr>
+                        <tr>
+                            <td>Периодичность</td>
+                            <td>{{ object.get_period_display }}</td>
+                        </tr>
+                        <tr>
+                            <td>Статус рассылки</td>
+                            <td>{{ object.get_status_display }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="button-group text-start mb-3">
+                        <a href="{% url 'mailing:mailing_update' object.pk %}" type="button" class="btn btn-warning">Редактировать</a>
+                        <a href="{% url 'mailing:mailing_delete' object.pk %}" type="button" class="btn btn-danger m-2">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Список рассылки
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for client in clients %}
+                        <li>{{ client }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
