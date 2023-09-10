@@ -52,7 +52,7 @@
                 <div class="card-body">
                     <ul>
                         {% for client in clients %}
-                        <li>{{ client }}</li>
+                        <li><a href="{% url 'mailing:client_detail' client.pk %}">{{ client }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
