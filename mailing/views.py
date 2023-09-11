@@ -2,7 +2,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView, UpdateView
 
 from mailing.forms import ClientForm, MailingForm
-from mailing.models import Client, Mailing
+from mailing.models import Client, Mailing, MailingLog
 
 
 class HomeView(TemplateView):
@@ -105,6 +105,8 @@ class MailingDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data['clients'] = Client.objects.filter(mailing=self.object)
+        context_data['logs'] = MailingLog.objects.filter(mailing=self.object).order_by('-pk')[
+                               :len(context_data['clients'])]
         return context_data
 
 
@@ -157,3 +159,16 @@ class MailingDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('mailing:mailing_list', args=[self.request.user.id])
+
+
+class MailingLogListView(ListView):
+    model = MailingLog
+    extra_context = {
+        'title': 'Логи'
+    }
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(mailing=self.kwargs.get('pk'))
+
+        return queryset

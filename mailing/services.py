@@ -14,9 +14,9 @@ def send_mailing():
     current_datetime = datetime.datetime.now()
 
     for mailing in mailings:
-        if mailing.stop_date is None or mailing.stop_date >= current_datetime.date():
+        if mailing.stop_date is None or mailing.stop_date > current_datetime.date():
 
-            if mailing.start_date <= current_datetime.date() and mailing.time < current_datetime.time():
+            if mailing.start_date <= current_datetime.date() and mailing.time <= current_datetime.time():
 
                 if mailing.status == 'created':
                     mailing.status = 'started'
@@ -25,15 +25,16 @@ def send_mailing():
                 clients = mailing.client.all()
                 last_log = MailingLog.objects.filter(mailing=mailing).last()
 
-                if (last_log is None or last_log.status == 'failed' or
-                        (mailing.period == 'daily' and (
-                        current_datetime.date() - last_log.date()) >= datetime.timedelta(days=1))
-                        or
-                        (mailing.period == 'weekly' and (
-                        current_datetime.date() - last_log.date()) >= datetime.timedelta(days=7))
-                        or
-                        (mailing.period == 'monthly' and (
-                        current_datetime.date() - last_log.date()) >= datetime.timedelta(days=count_days()))):
+                if last_log is None or last_log.status == 'failed' or (
+
+                        mailing.period == 'daily' and (
+                        current_datetime.date() - last_log.date()) >= datetime.timedelta(days=1)) or (
+
+                        mailing.period == 'weekly' and (
+                        current_datetime.date() - last_log.date()) >= datetime.timedelta(days=7)) or (
+
+                        mailing.period == 'monthly' and (
+                        current_datetime.date() - last_log.date()) >= datetime.timedelta(days=count_days())):
 
                     send_to_clients(clients, mailing)
         else:
