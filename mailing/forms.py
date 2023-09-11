@@ -1,5 +1,5 @@
 from django import forms
-
+import datetime
 from mailing.models import Client, Mailing
 
 
@@ -27,3 +27,10 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         self.fields['client'].widget = forms.CheckboxSelectMultiple()
         self.fields['client'].queryset = Client.objects.filter(added_by=user)
         self.fields['time'].help_text = 'Введите время в формате ЧЧ:ММ'
+        self.fields['start_date'].help_text = 'Введите дату в формате ДД.ММ.ГГГГ'
+
+    def clean_start_date(self):
+        cleaned_data = self.cleaned_data['start_date']
+        if cleaned_data < datetime.date.today():
+            raise forms.ValidationError('Дата старта рассылки не может быть меньше текущей')
+        return cleaned_data

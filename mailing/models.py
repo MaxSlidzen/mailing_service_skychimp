@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.conf import settings
 from django.db import models
 
@@ -42,6 +44,7 @@ class Mailing(models.Model):
         (STATUS_DONE, 'Завершена'),
     )
 
+    start_date = models.DateField(default=date.today(), verbose_name='дата старта рассылки')
     time = models.TimeField(verbose_name='время отправки')
     period = models.CharField(max_length=20, choices=PERIODS, verbose_name='периодичность')
     status = models.CharField(max_length=20, choices=STATUSES, verbose_name='статус рассылки')
