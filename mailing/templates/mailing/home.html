@@ -1,4 +1,5 @@
 {% extends 'mailing/base.html' %}
+{% load my_tags %}
 {% block content %}
 
 <div class="container">
@@ -13,9 +14,9 @@
         </thead>
         <tbody>
         <tr>
-            <td>{{ mailings }}</td>
-            <td>{{ active_mailings }}</td>
-            <td>{{ unique_clients }}</td>
+            <td>{% all_mailings %}</td>
+            <td>{% active_mailings %}</td>
+            <td>{% unique_clients %}</td>
         </tr>
         </tbody>
     </table>

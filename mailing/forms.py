@@ -28,9 +28,16 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
         self.fields['client'].queryset = Client.objects.filter(added_by=user)
         self.fields['time'].help_text = 'Введите время в формате ЧЧ:ММ'
         self.fields['start_date'].help_text = 'Введите дату в формате ДД.ММ.ГГГГ'
+        self.fields['stop_date'].help_text = 'Введите дату в формате ДД.ММ.ГГГГ (необязательное поле)'
 
     def clean_start_date(self):
         cleaned_data = self.cleaned_data['start_date']
         if cleaned_data < datetime.date.today():
             raise forms.ValidationError('Дата старта рассылки не может быть меньше текущей')
+        return cleaned_data
+
+    def clean_stop_date(self):
+        cleaned_data = self.cleaned_data['stop_date']
+        if cleaned_data is not None and cleaned_data < datetime.date.today():
+            raise forms.ValidationError('Дата завершения рассылки не может быть меньше текущей')
         return cleaned_data

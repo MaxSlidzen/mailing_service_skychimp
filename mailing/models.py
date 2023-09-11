@@ -39,15 +39,16 @@ class Mailing(models.Model):
     STATUS_STARTED = 'started'
     STATUS_DONE = 'done'
     STATUSES = (
-        (STATUS_STARTED, 'Запущена'),
+        (STATUS_STARTED, 'Активна'),
         (STATUS_CREATED, 'Создана'),
-        (STATUS_DONE, 'Завершена'),
+        (STATUS_DONE, 'Неактивна'),
     )
 
     start_date = models.DateField(default=date.today(), verbose_name='дата старта рассылки')
+    stop_date = models.DateField(**NULLABLE, verbose_name='дата завершения рассылки')
     time = models.TimeField(verbose_name='время отправки')
     period = models.CharField(max_length=20, choices=PERIODS, verbose_name='периодичность')
-    status = models.CharField(max_length=20, choices=STATUSES, verbose_name='статус рассылки')
+    status = models.CharField(max_length=20, default='created', choices=STATUSES, verbose_name='статус рассылки')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
                                verbose_name='автор рассылки')
     client = models.ManyToManyField(Client, verbose_name='клиент')
