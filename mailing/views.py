@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView, UpdateView
 
+from blog.models import Article
 from mailing.forms import ClientForm, MailingForm
 from mailing.models import Client, Mailing, MailingLog
 from mailing.services import get_cache_mailing
@@ -23,7 +24,8 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['myself'] = self.request.user
+        context_data['articles'] = Article.objects.all().order_by('?')[:3]
+        return context_data
 
 
 class ClientListView(LoginRequiredMixin, UserPassesTestMixin, ListView):

@@ -1,0 +1,20 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+    <div class="container">
+            <div class="card col m-4">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>Подтвердить удаление "{{ object.title }}"?</p>
+                        <button type="submit" class="btn btn-danger">
+                            Подтвердить
+                        </button>
+                        <a href="{% url 'blog:article_detail' object.pk %}" class="btn btn-warning">
+                            Отмена
+                        </a>
+                    </form>
+                </div>
+            </div>
+    </div>
+{% endblock %}

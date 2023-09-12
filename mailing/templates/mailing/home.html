@@ -32,69 +32,32 @@
             <button type="button" data-bs-target="#ArticleCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <div class="row">
-                            <div class="col-6 text-start">
-                                <h1>Заголовок статьи</h1>
-                                <p class="opacity-75">Содержание статьи</p>
-                                <hr>
-                                <ul class="list-unstyled mt-3 mb-4 text-start opacity-75">
-                                    <li>Дата публикации</li>
-                                    <li>Просмотров</li>
-                                </ul>
-                                <p><a class="btn btn-lg btn-primary" href="#">Читать</a></p>
-                            </div>
-                            <div class="col-6 text-end">
-                                <img src="#" class="img-fluid" alt="Card image">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <div class="row">
-                            <div class="col-6 text-start">
-                                <h1>Заголовок статьи</h1>
-                                <p class="opacity-75">Содержание статьи</p>
-                                <hr>
-                                <ul class="list-unstyled mt-3 mb-4 text-start opacity-75">
-                                    <li>Дата публикации</li>
-                                    <li>Просмотров</li>
-                                </ul>
-                                <p><a class="btn btn-lg btn-primary" href="#">Читать</a></p>
-                            </div>
-                            <div class="col-6 text-end">
-                                <img src="#" class="img-fluid" alt="Card image">
+            {% for article in articles %}
+                {% if forloop.first %}
+                <div class="carousel-item active">
+                {% else %}
+                <div class="carousel-item">
+                {% endif %}
+                    <div class="container">
+                        <div class="carousel-caption">
+                            <div class="row">
+                                <div class="col-6 text-start">
+                                    <h1>{{ article.title }}</h1>
+                                    <p class="opacity-75">{{ article.content|truncatechars:50 }}</p>
+                                    <hr>
+                                    <ul class="list-unstyled mt-3 mb-4 text-start opacity-75">
+                                        <li>Дата публикации - {{ article.published_at }}</li>
+                                    </ul>
+                                    <p><a class="btn btn-lg btn-primary" href="{% url 'blog:article_detail' article.pk %}">Читать</a></p>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <img src="/media/{{article.image}}" class="img-fluid" alt="Card image">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="carousel-item">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <div class="row">
-                            <div class="col-6 text-start">
-                                <h1>Заголовок статьи</h1>
-                                <p class="opacity-75">Содержание статьи</p>
-                                <hr>
-                                <ul class="list-unstyled mt-3 mb-4 text-start opacity-75">
-                                    <li>Дата публикации</li>
-                                    <li>Просмотров</li>
-                                </ul>
-                                <p><a class="btn btn-lg btn-primary" href="#">Читать</a></p>
-                            </div>
-                            <div class="col-6 text-end">
-                                <img src="#" class="img-fluid" alt="Card image">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#ArticleCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>

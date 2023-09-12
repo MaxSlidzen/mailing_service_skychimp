@@ -1,0 +1,32 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+
+<div class="container">
+    {% if perms.blog.add_article %}
+    <div class="col-12 mb-5">
+        <a class="btn btn-success" href="{% url 'blog:article_create' %}">Добавить статью</a>
+    </div>
+    {% endif %}
+    <div class="row">
+
+        {% for object in object_list %}
+            <div class="col-md-4">
+                <div class="col">
+                    <img class="rounded img-fluid" src="/media/{{ object.image }}" alt="Card image">
+                </div>
+                <h3>{{ object.title }}</h3>
+                <p>{{ object.content|truncatechars:200 }}</p>
+                <div class="btn-group">
+                <p>
+                        <a class="btn btn-outline-info" href="{% url 'blog:article_detail' object.pk %}"
+                           role="button">
+                            Перейти к статье
+                        </a>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
