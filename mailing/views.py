@@ -1,3 +1,6 @@
+import datetime
+
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, DeleteView, UpdateView
 
@@ -172,3 +175,22 @@ class MailingLogListView(ListView):
         queryset = queryset.filter(mailing=self.kwargs.get('pk'))
 
         return queryset
+
+
+def toggle_status(request, pk):
+    mailing_item = get_object_or_404(Mailing, pk=pk)
+
+    mailing_start_datetime = datetime.datetime.combine(mailing_item.start_date, mailing_item.time)
+    if mailing_item.stop_date is not None and mailing_item.stop_date <= datetime.date.today():
+        pass
+    elif mailing_item.status in ['started', 'created']:
+        mailing_item.status = 'done'
+    else:
+        if mailing_start_datetime < datetime.datetime.now():
+            mailing_item.status = 'started'
+        else:
+            mailing_item.status = 'created'
+
+    mailing_item.save()
+
+    return redirect(reverse('mailing:mailing_detail', args=[pk]))

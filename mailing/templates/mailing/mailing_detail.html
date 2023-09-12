@@ -25,6 +25,20 @@
                             <td>{{ object.time }}</td>
                         </tr>
                         <tr>
+                            <td>Дата начала</td>
+                            <td>{{ object.start_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>Дата завершения</td>
+                            <td>
+                                {% if object.stop_date is None %}
+                                Не указана
+                                {% else %}
+                                {{ object.stop_date }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Периодичность</td>
                             <td>{{ object.get_period_display }}</td>
                         </tr>
@@ -33,11 +47,27 @@
                             <td>{{ object.get_status_display }}</td>
                         </tr>
                     </table>
+                    <p>{{ toggle_message }}</p>
                 </div>
                 <div class="card-footer">
                     <div class="button-group text-start mb-3">
-                        <a href="{% url 'mailing:mailing_update' object.pk %}" type="button" class="btn btn-warning">Редактировать</a>
-                        <a href="{% url 'mailing:mailing_delete' object.pk %}" type="button" class="btn btn-danger m-2">Удалить</a>
+                        {% if user == object.author %}
+                        <a href="{% url 'mailing:mailing_update' object.pk %}" type="button" class="btn btn-warning">
+                            Редактировать
+                        </a>
+                        <a href="{% url 'mailing:mailing_delete' object.pk %}" type="button" class="btn btn-danger m-2">
+                            Удалить
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'mailing:toggle_status' object.pk %}" type="button"
+                           class="btn btn-secondary text-right m-2">
+                            {% if object.status == 'started' or object.status == 'created' %}
+                            Отключить
+                            {% else %}
+                            Включить
+                            {% endif %}
+                        </a>
+                        <span>{{ toggle_message }}</span>
                     </div>
                 </div>
             </div>
@@ -86,7 +116,10 @@
                 </tbody>
             </table>
             <div class="mb-3">
-                <a href="{% url 'mailing:log_list' object.pk %}" type="button" class="btn btn-secondary form-control">Просмотр всех логов</a>
+                <a href="{% url 'mailing:log_list' object.pk %}" type="button"
+                   class="btn bg-secondary-subtle form-control">
+                    Просмотр всех логов
+                </a>
             </div>
         </div>
     </div>

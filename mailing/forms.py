@@ -19,7 +19,7 @@ class ClientForm(StyleFormMixin, forms.ModelForm):
 class MailingForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
-        exclude = ('author',)
+        exclude = ('author', 'status',)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
