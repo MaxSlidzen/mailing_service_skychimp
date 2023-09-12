@@ -20,6 +20,12 @@
                                 Зарегистрироваться
                             {% endif %}
                         </button>
+
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'users:user_delete' object.pk %}" class="btn btn-danger mx-3">
+                                Удалить аккаунт
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

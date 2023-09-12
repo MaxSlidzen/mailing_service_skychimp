@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
-from django.views.generic import CreateView, UpdateView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView, DeleteView
 
 from mailing.models import Mailing
 from users.forms import UserLoginForm, UserRegisterForm, UserUpdateForm
@@ -50,6 +50,17 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = User
+    extra_context = {
+        'title': 'Удаление аккаунта'
+    }
+    success_url = reverse_lazy('mailing:home')
+
+    def test_func(self):
+        return self.request.user.pk == self.get_object().pk or self.request.user.is_superuser
+
+
 class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
     extra_context = {
@@ -74,7 +85,7 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # Если убрать строку, текущий пользователь в меню будет указан как выбранный
         context_data['user'] = self.request.user
-        context_data['mailings'] = get_cache_user(self.request.user)
+        context_data['mailings'] = get_cache_user(self.get_object())
         return context_data
 
 

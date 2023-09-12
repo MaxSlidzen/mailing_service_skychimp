@@ -36,7 +36,11 @@
                                 {% endif %}
                             </td>
                         </tr>
+
                     </table>
+                    {% if user.is_superuser %}
+                        <a class="btn btn-danger form-control" href="{% url 'users:user_delete' object.pk %}">Удалить пользователя</a>
+                    {% endif %}
                 </div>
                 <div class="card-footer"></div>
             </div>
