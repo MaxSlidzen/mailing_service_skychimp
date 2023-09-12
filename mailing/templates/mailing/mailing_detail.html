@@ -95,32 +95,36 @@
             <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
                 <h4>Логи</h4>
             </div>
-            <table class="table text-center">
-                <thead>
-                    <tr>
-                        <th scope="col">Дата и время</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col">Клиент</th>
-                        <th scope="col">Сообщение об ошибке</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for log in logs %}
-                    <tr>
-                        <td>{{ log.trying_datetime }}</td>
-                        <td>{{ log.get_status_display }}</td>
-                        <td>{{ log.client }}</td>
-                        <td>{{ log.error_message }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <div class="mb-3">
-                <a href="{% url 'mailing:log_list' object.pk %}" type="button"
-                   class="btn bg-secondary-subtle form-control">
-                    Просмотр всех логов
-                </a>
-            </div>
+            {% if logs|length == 0 %}
+                <p class="text-center">Отсутствуют</p>
+            {% else %}
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Дата и время</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">Клиент</th>
+                            <th scope="col">Сообщение об ошибке</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log.trying_datetime }}</td>
+                            <td>{{ log.get_status_display }}</td>
+                            <td>{{ log.client }}</td>
+                            <td>{{ log.error_message }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="mb-3">
+                    <a href="{% url 'mailing:log_list' object.pk %}" type="button"
+                       class="btn bg-secondary-subtle form-control">
+                        Просмотр всех логов
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

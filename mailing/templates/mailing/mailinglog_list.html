@@ -3,29 +3,35 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-                <h4>Рассылка "{{object_list.last.mailing }}"</h4>
-            </div>
-            <table class="table text-center">
-                <thead>
-                    <tr>
-                        <th scope="col">Дата и время</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col">Клиент</th>
-                        <th scope="col">Сообщение об ошибке</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for log in object_list reversed %}
-                    <tr>
-                        <td>{{ log.trying_datetime }}</td>
-                        <td>{{ log.get_status_display }}</td>
-                        <td>{{ log.client }}</td>
-                        <td>{{ log.error_message }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            {% if object_list|length == 0 %}
+                <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+                    <h4>Отсутствуют"</h4>
+                </div>
+            {% else %}
+                <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+                    <h4>Рассылка "{{object_list.last.mailing }}"</h4>
+                </div>
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Дата и время</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">Клиент</th>
+                            <th scope="col">Сообщение об ошибке</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for log in object_list reversed %}
+                        <tr>
+                            <td>{{ log.trying_datetime }}</td>
+                            <td>{{ log.get_status_display }}</td>
+                            <td>{{ log.client }}</td>
+                            <td>{{ log.error_message }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </div>
 </div>

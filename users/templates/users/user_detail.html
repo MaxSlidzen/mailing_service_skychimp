@@ -26,10 +26,10 @@
                             <td>Статус</td>
                             <td>
                                 {% if not object.is_staff %}
-                                    {% if object.is_active %}
-                                        <a class="btn btn-warning" href="{% url 'users:toggle_activity' object.pk %}">Не активен</a>
+                                    {% if not object.is_active %}
+                                        <a class="btn btn-warning" href="{% url 'users:toggle_activity' object.pk %}">Не активен/подключить к сервису</a>
                                     {% else %}
-                                        <a class="btn btn-success" href="{% url 'users:toggle_activity' object.pk %}">Активен</a>
+                                        <a class="btn btn-success" href="{% url 'users:toggle_activity' object.pk %}">Активен/отключить от сервиса</a>
                                     {% endif %}
                                 {% else %}
                                     <span>Персонал</span>

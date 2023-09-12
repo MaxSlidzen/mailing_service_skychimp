@@ -20,10 +20,10 @@
             <td>{{ object|full_name|title }}</td>
             <td>
                 {% if not object.is_staff %}
-                    {% if object.is_active %}
-                        <a class="btn btn-warning" href="{% url 'users:toggle_activity' object.pk %}">Не активен</a>
+                    {% if not object.is_active %}
+                        <span>Не активен</span>
                     {% else %}
-                        <a class="btn btn-success" href="{% url 'users:toggle_activity' object.pk %}">Активен</a>
+                        <span>Активен</span>
                     {% endif %}
                 {% else %}
                 <span>Персонал</span>

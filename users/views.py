@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
@@ -36,7 +38,7 @@ class UserRegisterView(CreateView):
         return super().form_valid(form)
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     success_url = reverse_lazy('mailing:home')
@@ -48,25 +50,36 @@ class UserUpdateView(UpdateView):
         return self.request.user
 
 
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
     extra_context = {
         'title': 'Список пользователей'
     }
 
+    def test_func(self):
+        return self.request.user.is_staff
 
-class UserDetailView(DetailView):
+
+class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = User
     extra_context = {
         'title': 'Пользователь'
     }
 
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+
+        # Если убрать строку, текущий пользователь в меню будет указан как выбранный
+        context_data['user'] = self.request.user
         context_data['mailings'] = Mailing.objects.filter(author=self.object)
         return context_data
 
 
+@user_passes_test(lambda u: u.is_staff)
+@login_required
 def toggle_activity(request, pk):
     user_item = get_object_or_404(User, pk=pk)
     if user_item.is_active:
@@ -76,7 +89,7 @@ def toggle_activity(request, pk):
 
     user_item.save()
 
-    return redirect(reverse('users:user_list'))
+    return redirect(reverse('users:user_detail', args=[user_item.pk]))
 
 
 def verify(request, verify_key):
