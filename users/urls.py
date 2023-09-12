@@ -1,5 +1,6 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from users.apps import UsersConfig
 from users.views import UserRegisterView, UserUpdateView, UserLoginView, verify, verify_success, send_verify, \
@@ -16,6 +17,6 @@ urlpatterns = [
     path('verify_success/', verify_success, name='verify_success'),
     path('send_verify/', send_verify, name='send_verify'),
     path('activity/<int:pk>/', toggle_activity, name='toggle_activity'),
-    path('user_list/', UserListView.as_view(), name='user_list'),
+    path('user_list/', cache_page(30)(UserListView.as_view()), name='user_list'),
     path('user_detail_<int:pk>/', UserDetailView.as_view(), name='user_detail'),
 ]

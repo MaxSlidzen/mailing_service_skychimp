@@ -9,7 +9,7 @@ from django.views.generic import CreateView, UpdateView, ListView, DetailView
 from mailing.models import Mailing
 from users.forms import UserLoginForm, UserRegisterForm, UserUpdateForm
 from users.models import User
-from users.services import send_verify_email
+from users.services import send_verify_email, get_cache_user
 
 
 class UserLoginView(LoginView):
@@ -74,7 +74,7 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # Если убрать строку, текущий пользователь в меню будет указан как выбранный
         context_data['user'] = self.request.user
-        context_data['mailings'] = Mailing.objects.filter(author=self.object)
+        context_data['mailings'] = get_cache_user(self.request.user)
         return context_data
 
 

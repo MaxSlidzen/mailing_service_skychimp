@@ -1,7 +1,9 @@
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy, reverse
@@ -9,6 +11,7 @@ from django.views.generic import TemplateView, CreateView, ListView, DetailView,
 
 from mailing.forms import ClientForm, MailingForm
 from mailing.models import Client, Mailing, MailingLog
+from mailing.services import get_cache_mailing
 from users.models import User
 
 
@@ -124,7 +127,6 @@ class MailingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        print(type(self.kwargs.get('pk')))
         if self.kwargs.get('pk') == 0:
             context_data['all_mailings'] = True
             context_data['title'] = 'Все рассылки'
@@ -145,9 +147,8 @@ class MailingDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['clients'] = Client.objects.filter(mailing=self.object)
-        context_data['logs'] = MailingLog.objects.filter(mailing=self.object).order_by('-pk')[
-                               :len(context_data['clients'])]
+        context_data['clients'], context_data['logs'] = get_cache_mailing(self.object)
+
         return context_data
 
 

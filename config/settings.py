@@ -84,8 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'TIME_ZONE': os.getenv('TIME_ZONE', 'Europe/Moscow')
+        'PASSWORD': os.getenv('DB_PASSWORD')
     }
 }
 
@@ -152,6 +151,7 @@ if CACHE_ENABLED:
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
             "LOCATION": os.getenv('REDIS_HOST'),
+            "TIMEOUT": 30
         }
     }
 
