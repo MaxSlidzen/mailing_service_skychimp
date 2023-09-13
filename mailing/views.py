@@ -24,6 +24,8 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+
+        # 3 случайные статьи
         context_data['articles'] = Article.objects.all().order_by('?')[:3]
         return context_data
 
@@ -110,22 +112,20 @@ class MailingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def test_func(self):
         user = self.request.user
+
+        # Просмотр cвоих рассылок определенным пользователем
         if self.kwargs.get('pk') != 0:
             author = User.objects.get(pk=self.kwargs.get('pk'))
-            return (user.is_staff and not user.has_perm('blog.add_article')) or user == author or user.is_superuser
+            return user == author
+
+        # Просмотр рассылок менеджерами рассылок
         else:
             return (user.is_staff and not user.has_perm('blog.add_article')) or user.is_superuser
 
     def get_queryset(self):
         queryset = super().get_queryset()
         if self.kwargs.get('pk') != 0:
-            if self.request.user.is_staff and not self.request.user.is_superuser:
-                raise Http404('Отсутствуют права доступа')
             queryset = queryset.filter(author=self.request.user.id)
-        else:
-            if not self.request.user.is_staff:
-                raise Http404('Отсутствуют права доступа')
-
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -171,6 +171,8 @@ class MailingCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return reverse('mailing:mailing_list', args=[self.request.user.id])
 
     def get_form_kwargs(self):
+
+        # Отправка пользователя в форму для выборки клиентов пользователя (а не всех клиентов сервиса)
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
@@ -195,6 +197,7 @@ class MailingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == self.get_object().author
 
     def get_form_kwargs(self):
+        # Отправка пользователя в форму для выборки клиентов пользователя (а не всех клиентов сервиса)
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
@@ -239,6 +242,7 @@ class MailingLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 def toggle_status(request, pk):
     mailing_item = get_object_or_404(Mailing, pk=pk)
 
+    # Проверка на авторство. Прописано в контроллере, поскольку без понятия как в декораторе это написать
     if request.user != mailing_item.author and not request.user.is_staff:
         raise Http404('Отсутствуют права доступа')
 

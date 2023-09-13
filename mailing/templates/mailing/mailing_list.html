@@ -6,7 +6,7 @@
     <a href="{% url 'mailing:mailing_create' %}" type="button" class="btn btn-success mb-4">Добавить рассылку</a>
     {% endif %}
     <table class="table">
-        <caption>Список рассылок {{object_list.all_mailings}}</caption>
+        <caption>Список рассылок</caption>
         <thead>
         <tr>
             {% if user.is_staff %}

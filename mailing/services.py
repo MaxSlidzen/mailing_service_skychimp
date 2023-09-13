@@ -12,21 +12,28 @@ from mailing.models import Mailing, MailingLog, Client
 
 
 def send_mailing():
+    """
+    Отправка рассылок по расписанию
+    """
     mailings = Mailing.objects.exclude(status='done')
+
+    # Для возможности сравнения с временем и датой, указанной в БД
     current_datetime = timezone.now()
 
     for mailing in mailings:
+
+        # Условие пока еще активной рассылки
         if mailing.stop_date is None or mailing.stop_date > current_datetime.date():
 
+            # Условие изменения статуса рассылки с "создана" на "активная"
             if mailing.start_date <= current_datetime.date() and mailing.time <= datetime.datetime.now().time():
-
                 if mailing.status == 'created':
                     mailing.status = 'started'
                     mailing.save()
 
-                clients = mailing.client.all()
                 last_log = MailingLog.objects.filter(mailing=mailing).last()
 
+                # Проверка расписания рассылки с учетом последнего лога рассылки
                 if last_log is None or last_log.status == 'failed' or (
 
                         mailing.period == 'daily' and (
@@ -36,15 +43,24 @@ def send_mailing():
                         current_datetime.date() - last_log.trying_datetime.date()) >= datetime.timedelta(days=7)) or (
 
                         mailing.period == 'monthly' and (
-                        current_datetime.date() - last_log.trying_datetime.date()) >= datetime.timedelta(days=count_days())):
-
+                        current_datetime.date() - last_log.trying_datetime.date()) >= datetime.timedelta(
+                    days=count_days())):
+                    clients = mailing.client.all()
                     send_to_clients(clients, mailing)
+
+        # Выполняется, когда текущая дата совпадает с датой завершения рассылки
         else:
             mailing.status = 'done'
             mailing.save()
 
 
 def send_to_clients(persons, letter):
+    """
+    Функция отправки сообщений рассылки клиентам с обработкой ошибок
+
+    @param persons: список клиентов в рассылке
+    @param letter: рассылка
+    """
     for person in persons:
         try:
             send_mail(
@@ -77,6 +93,9 @@ def send_to_clients(persons, letter):
 
 
 def count_days():
+    """
+    Подсчет дней в предыдущем месяце
+    """
     last_month = datetime.date.today().month - 1
     current_year = datetime.date.today().year
 
@@ -90,13 +109,14 @@ def count_days():
 
 
 def get_cache_mailing(mailing_item):
+    """
+    Кеширование данных по клиентам и последним логам в представлении отдельной рассылки
+    """
     if settings.CACHE_ENABLED:
         key_clients = f'clients_mailing_{mailing_item.pk}'
         key_logs = f'logs_mailing_{mailing_item.pk}'
         cache_data_clients = cache.get(key_clients)
         cache_data_logs = cache.get(key_logs)
-        print(cache_data_clients)
-        print(cache_data_logs)
         if cache_data_clients is None:
             cache_data_clients = Client.objects.filter(mailing=mailing_item)
             cache.set(key_clients, cache_data_clients)

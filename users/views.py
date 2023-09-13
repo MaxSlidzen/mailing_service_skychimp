@@ -85,8 +85,9 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
 
-        # Если убрать строку, текущий пользователь в меню будет указан как выбранный
+        # Если убрать строку, вместо текущего пользователя (в меню) будет отображаться выбранный
         context_data['user'] = self.request.user
+
         context_data['mailings'] = get_cache_user(self.get_object())
         return context_data
 
@@ -108,6 +109,8 @@ def toggle_activity(request, pk):
 def verify(request, verify_key):
     user_item = get_object_or_404(User, verify_token=verify_key)
     user_item.is_active = True
+
+    # Удаление значения токена для снижения вероятности ошибки уникальности при создании токена для нового пользователя
     user_item.verify_token = None
     user_item.save()
     return redirect(reverse('users:verify_success'))

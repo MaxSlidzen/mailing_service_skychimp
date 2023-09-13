@@ -18,6 +18,9 @@ def send_verify_email(user_item: User):
 
 
 def get_cache_user(user_item):
+    """
+    Кеширование данных по рассылкам пользователя
+    """
     if settings.CACHE_ENABLED:
         key = f'user_mailings_{user_item.pk}'
         cache_data_mailings = cache.get(key)
