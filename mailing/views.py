@@ -1,7 +1,7 @@
 import datetime
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.cache import cache
 from django.http import Http404
@@ -109,11 +109,12 @@ class MailingListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     }
 
     def test_func(self):
+        user = self.request.user
         if self.kwargs.get('pk') != 0:
             author = User.objects.get(pk=self.kwargs.get('pk'))
-            return self.request.user.is_staff or self.request.user == author
+            return (user.is_staff and not user.has_perm('blog.add_article')) or user == author or user.is_superuser
         else:
-            return self.request.user.is_staff
+            return (user.is_staff and not user.has_perm('blog.add_article')) or user.is_superuser
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -145,7 +146,8 @@ class MailingDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     }
 
     def test_func(self):
-        return self.request.user.is_staff or self.request.user == self.get_object().author
+        user = self.request.user
+        return (user.is_staff and not user.has_perm('blog.add_article')) or user == self.get_object().author or user.is_superuser
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -190,7 +192,7 @@ class MailingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     }
 
     def test_func(self):
-        return self.request.user == self.get_object().author or self.request.user.is_superuser
+        return self.request.user == self.get_object().author
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -209,7 +211,7 @@ class MailingDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     }
 
     def test_func(self):
-        return self.request.user == self.get_object().author or self.request.user.is_superuser
+        return self.request.user == self.get_object().author
 
     def get_success_url(self):
         return reverse('mailing:mailing_list', args=[self.request.user.id])
@@ -233,6 +235,7 @@ class MailingLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 @login_required
+@user_passes_test(lambda u: not u.has_perm('blog.add_article') or u.is_superuser)
 def toggle_status(request, pk):
     mailing_item = get_object_or_404(Mailing, pk=pk)
 
@@ -240,6 +243,7 @@ def toggle_status(request, pk):
         raise Http404('Отсутствуют права доступа')
 
     mailing_start_datetime = datetime.datetime.combine(mailing_item.start_date, mailing_item.time)
+
     if mailing_item.stop_date is not None and mailing_item.stop_date <= datetime.date.today():
         raise Http404('Невозможно активировать завершенную рассылку. Измените дату завершения')
     elif mailing_item.status in ['started', 'created']:

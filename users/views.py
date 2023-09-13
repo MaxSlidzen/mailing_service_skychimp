@@ -68,7 +68,8 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     }
 
     def test_func(self):
-        return self.request.user.is_staff
+        user = self.request.user
+        return (user.is_staff and not user.has_perm('blog.add_article')) or user.is_superuser
 
 
 class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -78,7 +79,8 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     }
 
     def test_func(self):
-        return self.request.user.is_staff
+        user = self.request.user
+        return (user.is_staff and not user.has_perm('blog.add_article')) or user.is_superuser
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -89,7 +91,7 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return context_data
 
 
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: (u.is_staff and not u.has_perm('blog.add_article')) or u.is_superuser)
 @login_required
 def toggle_activity(request, pk):
     user_item = get_object_or_404(User, pk=pk)

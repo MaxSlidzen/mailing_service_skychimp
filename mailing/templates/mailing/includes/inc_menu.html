@@ -24,30 +24,45 @@
                         <li class="nav-item">
                             <a class="nav-link link-primary" href="{% url 'users:login' %}">Вход</a>
                         </li>
+
                     {% else %}
                         <img class="rounded-5" src="/media/{{ user.avatar }}" alt="#" height="40" width="40">
+
                         {% if user.is_superuser %}
                             <li class="nav-item m-2">
                                 <span class="navbar-text text-success">Администратор</span>
                             </li>
                         {% elif user.is_staff %}
-                            <li class="nav-item m-2">
+                            <li class="nav-item mt-2">
                                 <span class="navbar-text text-success">Менеджер</span>
                             </li>
+
+                            {% if perms.blog.add_article %}
+                                <li class="nav-item m-2">
+                                    <span class="navbar-text text-success">блога</span>
+                                </li>
+                            {% else %}
+                                <li class="nav-item m-2">
+                                    <span class="navbar-text text-success">рассылок</span>
+                                </li>
+                            {% endif %}
                         {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link link-primary dropdown-toggle" role="button" data-bs-toggle="dropdown"
                                aria-expanded="false" href="#">{{ user }}</a>
                             <ul class="dropdown-menu dropdown-menu-dark m-2">
                                 <li><a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a></li>
+
                                 {% if user.is_superuser or not user.is_staff%}
                                     <li><a class="dropdown-item" href="{% url 'mailing:mailing_list' user.id %}">Мои рассылки</a></li>
                                     <li><a class="dropdown-item" href="{% url 'mailing:client_list' %}">Мои клиенты</a></li>
                                 {% endif %}
-                                {% if user.is_staff %}
+
+                                {% if user.is_staff and not perms.blog.add_article or user.is_superuser %}
                                     <li><a class="dropdown-item" href="{% url 'mailing:mailing_list' 0 %}">Все рассылки</a></li>
                                     <li><a class="dropdown-item" href="{% url 'users:user_list' %}">Пользователи</a></li>
                                 {% endif %}
+
                             </ul>
                         </li>
                         <li class="nav-item">
