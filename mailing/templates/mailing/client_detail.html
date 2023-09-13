@@ -1,0 +1,57 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        {{title}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <caption>Информация о клиенте</caption>
+                        <tr>
+                            <td>Электронная почта</td>
+                            <td>{{ object.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>ФИО</td>
+                            <td>{{ object|full_name|title }}</td>
+                        </tr>
+                        <tr>
+                            <td>Комментарий</td>
+                            <td>{{ object.comment }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="button-group text-start mb-3">
+                        <a href="{% url 'mailing:client_update' object.pk %}" type="button" class="btn btn-warning">Редактировать</a>
+                        <a href="{% url 'mailing:client_delete' object.pk %}" type="button" class="btn btn-danger m-2">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Участвует в рассылках
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for mailing in mailings %}
+                        <li><a href="{% url 'mailing:mailing_detail' mailing.pk %}">{{ mailing }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

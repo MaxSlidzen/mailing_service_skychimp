@@ -1,0 +1,131 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        {{ title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <caption>Рассылка</caption>
+                        <tr>
+                            <td>Тема</td>
+                            <td>{{ object.subject }}</td>
+                        </tr>
+                        <tr>
+                            <td>Сообщение</td>
+                            <td>{{ object.message }}</td>
+                        </tr>
+                        <tr>
+                            <td>Время отправки</td>
+                            <td>{{ object.time }}</td>
+                        </tr>
+                        <tr>
+                            <td>Дата начала</td>
+                            <td>{{ object.start_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>Дата завершения</td>
+                            <td>
+                                {% if object.stop_date is None %}
+                                Не указана
+                                {% else %}
+                                {{ object.stop_date }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Периодичность</td>
+                            <td>{{ object.get_period_display }}</td>
+                        </tr>
+                        <tr>
+                            <td>Статус рассылки</td>
+                            <td>{{ object.get_status_display }}</td>
+                        </tr>
+                    </table>
+                    <p>{{ toggle_message }}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="button-group text-start mb-3">
+                        {% if user == object.author %}
+                        <a href="{% url 'mailing:mailing_update' object.pk %}" type="button" class="btn btn-warning">
+                            Редактировать
+                        </a>
+                        <a href="{% url 'mailing:mailing_delete' object.pk %}" type="button" class="btn btn-danger m-2">
+                            Удалить
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'mailing:toggle_status' object.pk %}" type="button"
+                           class="btn btn-secondary text-right m-2">
+                            {% if object.status == 'started' or object.status == 'created' %}
+                            Отключить
+                            {% else %}
+                            Включить
+                            {% endif %}
+                        </a>
+                        <span>{{ toggle_message }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Список рассылки
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for client in clients %}
+                        <li><a href="{% url 'mailing:client_detail' client.pk %}">{{ client }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+                <h4>Логи</h4>
+            </div>
+            {% if logs|length == 0 %}
+                <p class="text-center">Отсутствуют</p>
+            {% else %}
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Дата и время</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">Клиент</th>
+                            <th scope="col">Сообщение об ошибке</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log.trying_datetime }}</td>
+                            <td>{{ log.get_status_display }}</td>
+                            <td>{{ log.client }}</td>
+                            <td>{{ log.error_message }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="mb-3">
+                    <a href="{% url 'mailing:log_list' object.pk %}" type="button"
+                       class="btn bg-secondary-subtle form-control">
+                        Просмотр всех логов
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

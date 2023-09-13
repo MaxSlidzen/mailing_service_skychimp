@@ -1,0 +1,67 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        {{title}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <img class="rounded mx-auto d-block" src="/media/{{ user.avatar }}" alt="#" height="200" width="200">
+                    <table class="table">
+                        <caption>Информация о пользователе</caption>
+                        <tr>
+                            <td>Электронная почта</td>
+                            <td>{{ object.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>ФИО</td>
+                            <td>{{ object|full_name|title }}</td>
+                        </tr>
+                        <tr>
+                            <td>Статус</td>
+                            <td>
+                                {% if not object.is_staff %}
+                                    {% if not object.is_active %}
+                                        <a class="btn btn-warning" href="{% url 'users:toggle_activity' object.pk %}">Не активен/подключить к сервису</a>
+                                    {% else %}
+                                        <a class="btn btn-success" href="{% url 'users:toggle_activity' object.pk %}">Активен/отключить от сервиса</a>
+                                    {% endif %}
+                                {% else %}
+                                    <span>Персонал</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                    </table>
+                    {% if user.is_superuser %}
+                        <a class="btn btn-danger form-control" href="{% url 'users:user_delete' object.pk %}">Удалить пользователя</a>
+                    {% endif %}
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        Рассылки
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for mailing in mailings %}
+                        <li><a href="{% url 'mailing:mailing_detail' mailing.pk %}">{{ mailing }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
