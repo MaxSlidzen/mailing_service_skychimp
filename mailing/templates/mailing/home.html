@@ -1,0 +1,73 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<div class="container">
+    <table class="table text-center">
+        <caption>Статистика</caption>
+        <thead>
+        <tr>
+            <th scope="col">Количество рассылок всего</th>
+            <th scope="col">Количество активных рассылок</th>
+            <th scope="col">Количество уникальных клиентов</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{% all_mailings %}</td>
+            <td>{% active_mailings %}</td>
+            <td>{% unique_clients %}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="featurette-divider"></div>
+<div class="container">
+    <div id="ArticleCarousel" class="carousel slide mb-6" data-bs-ride="carousel" data-bs-theme="dark">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#ArticleCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true"
+                    aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#ArticleCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#ArticleCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            {% for article in articles %}
+                {% if forloop.first %}
+                <div class="carousel-item active">
+                {% else %}
+                <div class="carousel-item">
+                {% endif %}
+                    <div class="container">
+                        <div class="carousel-caption">
+                            <div class="row">
+                                <div class="col-6 text-start">
+                                    <h1>{{ article.title }}</h1>
+                                    <p class="opacity-75">{{ article.content|truncatechars:50 }}</p>
+                                    <hr>
+                                    <ul class="list-unstyled mt-3 mb-4 text-start opacity-75">
+                                        <li>Дата публикации - {{ article.published_at }}</li>
+                                    </ul>
+                                    <p><a class="btn btn-lg btn-primary" href="{% url 'blog:article_detail' article.pk %}">Читать</a></p>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <img src="/media/{{article.image}}" class="img-fluid" alt="Card image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#ArticleCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#ArticleCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+{% endblock %}

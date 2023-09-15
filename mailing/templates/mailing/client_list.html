@@ -1,0 +1,27 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+{% load my_tags %}
+
+<div class="container">
+    <a href="{% url 'mailing:client_create' %}" type="button" class="btn btn-success mb-4">Добавить клиента</a>
+    <table class="table">
+        <caption>Список клиентов</caption>
+        <thead>
+        <tr>
+            <th scope="col">Электронная почта</th>
+            <th scope="col">ФИО</th>
+            <th scope="col">Комментарий</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td><a href="{% url 'mailing:client_detail' object.pk %}">{{ object.email }}</a></td>
+            <td>{{ object|full_name|title }}</td>
+            <td>{{ object.comment }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
