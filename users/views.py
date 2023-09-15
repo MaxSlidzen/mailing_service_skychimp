@@ -12,7 +12,7 @@ from users.models import User
 from users.services import send_verify_email, get_cache_user
 
 
-class UserLoginView(LoginView):
+class UserLoginView(UserPassesTestMixin, LoginView):
     model = User
     form_class = UserLoginForm
     template_name = 'users/login.html'
@@ -20,14 +20,20 @@ class UserLoginView(LoginView):
         'title': 'Вход на портал'
     }
 
+    def test_func(self):
+        return not self.request.user.is_authenticated
 
-class UserRegisterView(CreateView):
+
+class UserRegisterView(UserPassesTestMixin, CreateView):
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:send_verify')
     extra_context = {
         'title': 'Регистрация'
     }
+
+    def test_func(self):
+        return not self.request.user.is_authenticated
 
     def form_valid(self, form):
         if form.is_valid():
@@ -113,10 +119,6 @@ def verify(request, verify_key):
     # Удаление значения токена для снижения вероятности ошибки уникальности при создании токена для нового пользователя
     user_item.verify_token = None
     user_item.save()
-    return redirect(reverse('users:verify_success'))
-
-
-def verify_success(request):
     context = {
         'title': 'Подтверждение регистрации',
         'verifying_message': 'Электронная почта подтверждена.'
